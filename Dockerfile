@@ -14,3 +14,5 @@ RUN pip install -r requirements.txt
 
 RUN apk del build-deps
 EXPOSE 8000
+
+CMD ["newrelic-admin", "run-program", "gunicorn", "monitored.wsgi:application", "--workers=5", "--bind", "0.0.0.0:8000", "--access-logfile", "-", "--error-logfile", "-"]
