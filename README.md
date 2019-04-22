@@ -1,2 +1,2 @@
-# flask-monitored
-Flask APP for TDC 2019 example
+# Django-Monitored
+Django APP for TDC 2019 Devops example

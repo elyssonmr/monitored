@@ -1,0 +1,36 @@
+version: "2"
+
+services:
+  postgresql:
+    image: postgres:11-alpine
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=monitored
+  web:
+    build: .
+    command: newrelic-admin run-program gunicorn monitored.wsgi:application --workers=5 --bind 0.0.0.0:8000 --access-logfile - --error-logfile -
+    ports:
+      - 8000:8000
+    environment:
+      - SQL_ENGINE=django.db.backends.postgresql
+      - SQL_DATABASE=monitored
+      - SQL_USER=postgres
+      - SQL_PASSWORD=postgres
+      - SQL_HOST=postgresql
+      - SQL_PORT=5432
+      - DATABASE=postgres
+      - DEBUG=0
+      - NEW_RELIC_CONFIG_FILE=newrelic.ini
+    volumes:
+      - .:/app/
+    depends_on:
+      - postgresql
+
+volumes:
+  pg_data:
+    external: false
